@@ -1,39 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+
+// Define a type for form state
+interface FormState {
+  password: string;
+}
+
+// Optional: type for contact info
+interface ContactInfo {
+  email: string;
+  phone: string;
+}
+
+const contactDetails: ContactInfo[] = [
+  { email: 'client@hotmail.com', phone: '666.666.6666' },
+];
 
 const Contact: React.FC = () => {
-  const password = 'cesar';
+  const correctPassword = 'cesar';
+
+  // State with explicit types
   const [authorized, setAuthorized] = useState<boolean>(false);
+  const [form, setForm] = useState<FormState>({ password: '' });
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const input = form.querySelector<HTMLInputElement>('#password');
-
-    const enteredPassword = input?.value ?? '';
-    setAuthorized(enteredPassword === password);
+  // Handle input change
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const login = (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="password">Password</label>
-      <input id="password" type="password" />
+  // Handle form submission
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-      <button type="submit">Submit</button>
-    </form>
-  );
-
-  const contactInfo = (
-    <ul>
-      <li>client@hotmail.com</li>
-      <li>666.666.6666</li>
-    </ul>
-  );
+    if (form.password === correctPassword) {
+      setAuthorized(true);
+      setError(null);
+    } else {
+      setError('Incorrect password');
+    }
+  };
 
   return (
     <div id="authorization">
-      <h1>{authorized ? 'Contact' : 'Enter the Password'}</h1>
-      {authorized ? contactInfo : login}
+      <h1>{authorized ? 'Contact Info' : 'Enter Password'}</h1>
+
+      {!authorized ? (
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+          />
+          <button type="submit">Submit</button>
+          {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+        </form>
+      ) : (
+        <ul>
+          {contactDetails.map((info, index) => (
+            <li key={index}>
+              {info.email} | {info.phone}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
