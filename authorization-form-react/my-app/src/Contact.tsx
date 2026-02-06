@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 
 const Contact: React.FC = () => {
-  const password: string = 'cesar';
+  const password = 'cesar';
   const [authorized, setAuthorized] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = e.currentTarget;
-    const input = form.querySelector<HTMLInputElement>(
-      'input[type="password"]'
-    );
+    const input = form.querySelector<HTMLInputElement>('#password');
 
     const enteredPassword = input?.value ?? '';
-    const auth = enteredPassword === password;
-    setAuthorized(auth);
+    setAuthorized(enteredPassword === password);
   };
 
   const login = (
-    <form action="#" onSubmit={handleSubmit}>
-      <input type="password" />
-      <input type="submit" />
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="password">Password</label>
+      <input id="password" type="password" />
+
+      <button type="submit">Submit</button>
     </form>
   );
 
