@@ -1,70 +1,55 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-
-// Define a type for form state
-interface FormState {
-  password: string;
-}
-
-// Optional: type for contact info
-interface ContactInfo {
-  email: string;
-  phone: string;
-}
-
-const contactDetails: ContactInfo[] = [
-  { email: 'client@hotmail.com', phone: '666.666.6666' },
-];
+import React, { useState } from 'react';
 
 const Contact: React.FC = () => {
-  const correctPassword = 'cesar';
-
-  // State with explicit types
+  const password: string = 'cesar';
   const [authorized, setAuthorized] = useState<boolean>(false);
-  const [form, setForm] = useState<FormState>({ password: '' });
-  const [error, setError] = useState<string | null>(null);
 
-  // Handle input change
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Handle form submission
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (form.password === correctPassword) {
-      setAuthorized(true);
-      setError(null);
-    } else {
-      setError('Incorrect password');
-    }
+    const input = e.currentTarget.querySelector<HTMLInputElement>('#password');
+    setAuthorized(input?.value === password);
   };
 
   return (
-    <div id="authorization">
-      <h1>{authorized ? 'Contact Info' : 'Enter Password'}</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 font-sans">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-sm text-center shadow-xl animate-fade">
+        <h1 className="mb-6 text-2xl font-semibold text-gray-800">
+          {authorized ? 'Contact' : 'Enter the Password'}
+        </h1>
 
-      {!authorized ? (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <button type="submit">Submit</button>
-          {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
-        </form>
-      ) : (
-        <ul>
-          {contactDetails.map((info, index) => (
-            <li key={index}>
-              {info.email} | {info.phone}
-            </li>
-          ))}
-        </ul>
-      )}
+        {!authorized ? (
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4"
+          >
+            <label
+              htmlFor="password"
+              className="text-sm text-gray-600 text-left"
+            >
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+
+            <button
+              type="submit"
+              className="p-3 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 active:scale-95 transition"
+            >
+              Submit
+            </button>
+          </form>
+        ) : (
+          <ul className="flex flex-col gap-3 text-gray-700">
+            <li>client@hotmail.com</li>
+            <li>666.666.6666</li>
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
